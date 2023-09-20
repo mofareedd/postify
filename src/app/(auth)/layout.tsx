@@ -1,18 +1,22 @@
 import { Icons } from "@/components/icons";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 // import AuthBgPic from "@/../public/auth-bg.jpg";
 // import Image from "next/image";
-export const metadata = {
-  title: "Dashboard",
-  description: "E-Commerce Dashboard",
-};
 
 export default async function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+
+  const session = await getServerSession()
+  
+if(session){
+  redirect('/')
+}
   return (
-    <div className="container relative hidden min-h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-3 lg:px-0">
+    <div className="w-screen relative min-h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-3 lg:px-0">
       <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex col-span-2">
         {/* <Image
           src={AuthBgPic}

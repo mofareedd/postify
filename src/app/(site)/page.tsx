@@ -1,16 +1,17 @@
-import SignIn from "@/components/sign-in";
+import ProfileCard from "@/components/home/profile-card";
 import { Card, CardBody } from "@nextui-org/card";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 
-export default function Home() {
+export default async function Home() {
+  const session = await getServerSession();
+
+  if (!session) {
+    redirect("/signin");
+  }
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <h1 className="text-lg">Hello World</h1>
-      <Card>
-        <CardBody>
-          <p>Make beautiful websites regardless of your design experience.</p>
-        </CardBody>
-      </Card>
-      <SignIn />
+    <main className="flex flex-row p-10 min-h-screen">
+      <ProfileCard />
     </main>
   );
 }
