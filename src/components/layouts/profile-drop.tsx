@@ -1,19 +1,19 @@
-"use client";
+"use client"
 
-import React from "react";
+import React from "react"
 import {
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
   Avatar,
-  User,
-} from "@nextui-org/react";
-import { useSession } from "next-auth/react";
-import ModeToggle from "./mode-toggle";
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@nextui-org/react"
+import { useSession } from "next-auth/react"
+
+import ModeToggle from "./mode-toggle"
 
 export default function ProfileDrop() {
-  const { data: session } = useSession();
+  const { data: session } = useSession()
 
   return (
     <Dropdown placement="bottom-end">
@@ -32,7 +32,7 @@ export default function ProfileDrop() {
       >
         <DropdownItem key="profile" className="h-14 gap-2">
           <p className="font-semibold">Signed in as</p>
-          <p className="font-semibold max-w-[150px] truncate">
+          <p className="max-w-[150px] truncate font-semibold">
             {session!.user?.email}
           </p>
         </DropdownItem>
@@ -49,5 +49,5 @@ export default function ProfileDrop() {
         </DropdownItem>
       </DropdownMenu>
     </Dropdown>
-  );
+  )
 }
