@@ -8,7 +8,7 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@nextui-org/react"
-import { useSession } from "next-auth/react"
+import { signOut, useSession } from "next-auth/react"
 
 import ModeToggle from "./mode-toggle"
 
@@ -44,7 +44,12 @@ export default function ProfileDrop() {
         <DropdownItem key="help_and_feedback">
           <ModeToggle />
         </DropdownItem>
-        <DropdownItem key="logout" color="danger" className="text-danger-500">
+        <DropdownItem
+          onClick={() => signOut({ callbackUrl: "/signin" })}
+          key="logout"
+          color="danger"
+          className="text-danger-500"
+        >
           Log Out
         </DropdownItem>
       </DropdownMenu>
