@@ -1,14 +1,21 @@
-import SiteHeader from "@/components/layouts/site-header";
+import { redirect } from "next/navigation"
+import { getServerSession } from "next-auth"
 
-export default function MainLayout({
+import SiteHeader from "@/components/layouts/site-header"
+
+export default async function MainLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
+  const session = await getServerSession()
+  if (!session) {
+    redirect("/signin")
+  }
   return (
     <>
       <SiteHeader />
       {children}
     </>
-  );
+  )
 }

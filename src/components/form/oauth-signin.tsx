@@ -26,6 +26,8 @@ export function OAuthSignIn() {
     // startTransition(async()=>{/
     try {
       await signIn(strategy)
+
+      toast.success("Signed in successfully!")
     } catch (err: any) {
       console.log(err)
       toast.error(err instanceof Error ? err.message : "Something went wrong")
