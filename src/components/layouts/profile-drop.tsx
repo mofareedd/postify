@@ -22,7 +22,7 @@ export default function ProfileDrop() {
           isBordered
           as="button"
           className="transition-transform"
-          src={session!.user?.image ?? ""}
+          src={session?.user?.image ?? ""}
         />
       </DropdownTrigger>
       <DropdownMenu
@@ -33,7 +33,7 @@ export default function ProfileDrop() {
         <DropdownItem key="profile" className="h-14 gap-2">
           <p className="font-semibold">Signed in as</p>
           <p className="max-w-[150px] truncate font-semibold">
-            {session!.user?.email}
+            {session?.user?.email}
           </p>
         </DropdownItem>
         <DropdownItem key="settings">My Settings</DropdownItem>

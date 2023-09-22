@@ -39,11 +39,7 @@ const users = [
 ]
 export default function Suggests() {
   return (
-    <div className="">
-      <Card className="mb-6 w-80 p-4">
-        <h1>right</h1>
-      </Card>
-
+    <div className="w-80">
       <Card className="flex gap-6 p-4">
         {users.map((user) => (
           <FriendCard key={user.name} {...user} />
