@@ -1,6 +1,13 @@
-import { LucideProps, LucideIcon, Github } from "lucide-react";
+import {
+  Github,
+  LucideIcon,
+  LucideProps,
+  TrashIcon,
+  Upload,
+  X,
+} from "lucide-react"
 
-export type Icon = LucideIcon;
+export type Icon = LucideIcon
 
 export const Icons = {
   logo: (props: LucideProps) => (
@@ -35,4 +42,7 @@ export const Icons = {
     </svg>
   ),
   gitHub: Github,
-};
+  trash: TrashIcon,
+  upload: Upload,
+  close: X,
+}

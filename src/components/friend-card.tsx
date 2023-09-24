@@ -1,5 +1,6 @@
 import React from "react"
 import { Button, Card, User } from "@nextui-org/react"
+import { toast } from "sonner"
 
 interface IProps {
   name: string
@@ -26,7 +27,10 @@ export default function FriendCard(props: IProps) {
         radius="full"
         size="sm"
         variant={isFollowed ? "bordered" : "solid"}
-        onPress={() => setIsFollowed(!isFollowed)}
+        onPress={() => {
+          setIsFollowed(!isFollowed)
+          toast.success("You are now following ")
+        }}
       >
         {isFollowed ? "Unfollow" : "Follow"}
       </Button>

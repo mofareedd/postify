@@ -2,27 +2,27 @@
 
 import { useState, useTransition } from "react"
 import { Button } from "@nextui-org/button"
+import { AuthOptions, NextAuthOptions } from "next-auth"
 import { signIn } from "next-auth/react"
 import { toast } from "sonner"
 
-import { authOptions } from "@/lib/auth-options"
 import { Icons } from "@/components/icons"
 
-// const oauthProviders = [
-//   { name: "Google", icon: "google" , strategy:''},
-//   { name: "Github", icon: "gitHub" },
-// ] satisfies {
-//   name: string;
-//   icon: keyof typeof Icons;
-//   strategy: Adapter;
-// }[];
+const oauthProviders = [
+  { name: "Google", icon: "google", strategy: "google" },
+  { name: "Github", icon: "gitHub", strategy: "github" },
+] satisfies {
+  name: string
+  icon: keyof typeof Icons
+  strategy: NextAuthOptions["providers"][number]["id"]
+}[]
 
 export function OAuthSignIn() {
   // const [isPending, startTransition] = useTransition();
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState<string | null>(null)
 
   async function handleSignIn(strategy: string) {
-    setIsLoading(true)
+    setIsLoading(strategy)
     // startTransition(async()=>{/
     try {
       await signIn(strategy)
@@ -32,13 +32,14 @@ export function OAuthSignIn() {
       console.log(err)
       toast.error(err instanceof Error ? err.message : "Something went wrong")
     }
-    setTimeout(() => setIsLoading(false), 4000)
+    setTimeout(() => setIsLoading(null), 4000)
 
     // })
   }
   return (
     <div className="w-full space-y-4">
-      {Object.values(authOptions.providers).map((provider) => {
+      {oauthProviders.map((provider) => {
+        const Icon = Icons[provider.icon]
         return (
           <div key={provider.name} className="w-full">
             <Button
@@ -46,15 +47,13 @@ export function OAuthSignIn() {
               key={provider.name}
               variant="shadow"
               className="w-full"
-              isLoading={isLoading}
-              onClick={() => handleSignIn(provider.id)}
+              isLoading={isLoading === provider.strategy}
+              onClick={() => handleSignIn(provider.strategy)}
             >
-              {provider.id === "github" && !isLoading ? (
-                <Icons.gitHub className="mr-2 h-4 w-4" aria-hidden="true" />
+              {isLoading !== provider.strategy ? (
+                <Icon className="mr-2 h-4 w-4" aria-hidden="true" />
               ) : null}
-              {provider.id === "google" ? (
-                <Icons.google className="mr-2 h-4 w-4" aria-hidden="true" />
-              ) : null}
+
               {provider.name}
             </Button>
           </div>
