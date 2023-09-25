@@ -1,0 +1,27 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1695588750308,
+      "tag": "0000_superb_alex_power",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1695589442874,
+      "tag": "0001_wet_silhouette",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1695605400475,
+      "tag": "0002_clean_scarlet_spider",
+      "breakpoints": true
+    }
+  ]
+}
