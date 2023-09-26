@@ -1,7 +1,12 @@
 import {
+  Copy,
+  Flag,
   Github,
+  Loader2,
+  LogIn,
   LucideIcon,
   LucideProps,
+  Send,
   TrashIcon,
   Upload,
   X,
@@ -45,4 +50,9 @@ export const Icons = {
   trash: TrashIcon,
   upload: Upload,
   close: X,
+  copy: Copy,
+  enter: LogIn,
+  flag: Flag,
+  spinner: Loader2,
+  send: Send,
 }

@@ -25,7 +25,7 @@ export default function ProfileInfo() {
             isBordered
             radius="full"
             size="md"
-            src={session!.user?.image ?? ""}
+            src={session?.user?.image ?? ""}
             // src="https://i.pravatar.cc/150?u=a04258114e29026702d"
           />
           <div className="flex flex-col items-start justify-center gap-1">

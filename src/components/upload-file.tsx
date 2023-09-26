@@ -7,23 +7,13 @@ import {
   Modal,
   ModalBody,
   ModalContent,
-  ModalFooter,
-  ModalHeader,
   useDisclosure,
 } from "@nextui-org/react"
-import { FileRejection, FileWithPath } from "@uploadthing/react"
 import { CameraIcon } from "lucide-react"
-import { Accept, useDropzone } from "react-dropzone"
-import type {
-  FieldPath,
-  FieldValues,
-  Path,
-  PathValue,
-  UseFormSetValue,
-} from "react-hook-form"
-import { toast } from "sonner"
+import type { FieldPath, FieldValues, UseFormSetValue } from "react-hook-form"
 
 import { formatBytes } from "@/lib/utils"
+import useDropUpload from "@/hooks/useDropUpload"
 
 import { Icons } from "./icons"
 
@@ -33,7 +23,6 @@ interface FileDialogProps<
 > extends React.HTMLAttributes<HTMLDivElement> {
   name: TName
   setValue: UseFormSetValue<TFieldValues>
-  accept?: Accept
   maxSize: number
   files: FileWithPreview[] | null
   setFiles: React.Dispatch<React.SetStateAction<FileWithPreview[] | null>>
@@ -43,9 +32,6 @@ interface FileDialogProps<
 export default function UploadFile<TFieldValues extends FieldValues>({
   name,
   setValue,
-  accept = {
-    "image/*": [],
-  },
   maxSize,
   files,
   setFiles,
@@ -55,45 +41,11 @@ export default function UploadFile<TFieldValues extends FieldValues>({
   ...props
 }: FileDialogProps<TFieldValues>) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
-
-  const onDrop = React.useCallback(
-    (acceptedFiles: FileWithPath[], rejectedFiles: FileRejection[]) => {
-      acceptedFiles.forEach((file) => {
-        const fileWithPreview = Object.assign(file, {
-          preview: URL.createObjectURL(file),
-        })
-        setFiles((prev) => [...(prev ?? []), fileWithPreview])
-      })
-
-      if (rejectedFiles.length > 0) {
-        rejectedFiles.forEach(({ errors }) => {
-          if (errors[0]?.code === "file-too-large") {
-            toast.error(
-              `File is too large. Max size is ${formatBytes(maxSize)}`
-            )
-            return
-          }
-          errors[0]?.message && toast.error(errors[0].message)
-        })
-      }
-    },
-
-    [maxSize, setFiles]
-  )
-
-  React.useEffect(() => {
-    setValue(name, files as PathValue<TFieldValues, Path<TFieldValues>>)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [files])
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: {
-      "image/*": [],
-    },
-    maxSize,
-    maxFiles: 2,
-    multiple: true,
+  const { getInputProps, getRootProps, isDragActive } = useDropUpload({
+    name,
+    setFiles,
+    files,
+    setValue,
   })
 
   return (
@@ -103,6 +55,7 @@ export default function UploadFile<TFieldValues extends FieldValues>({
         onPress={onOpen}
         isIconOnly
         color="secondary"
+        isDisabled={disabled}
         variant="faded"
         aria-label="Take a photo"
         className="absolute right-2 top-3 h-unit-7 w-unit-7"
@@ -112,91 +65,82 @@ export default function UploadFile<TFieldValues extends FieldValues>({
       </Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalBody className="my-4">
-                <p className="text-muted-foreground absolute left-5 top-4 text-base font-medium">
-                  Upload your images
-                </p>
-                <div
-                  {...getRootProps()}
-                  className={cn(
-                    "border-muted-foreground/25 hover:bg-muted/25 group relative mt-8 grid h-48 w-full cursor-pointer place-items-center rounded-lg border-2 border-dashed px-5 py-2.5 text-center transition",
-                    "focus-visible:ring-ring mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-                    isDragActive && "border-muted-foreground/50",
-                    disabled && "pointer-events-none opacity-60"
-                  )}
-                  {...props}
-                >
-                  <input {...getInputProps()} />
-                  {isUploading ? (
-                    <div className="group grid w-full place-items-center gap-1 sm:px-10">
-                      <Icons.upload
-                        className="text-muted-foreground h-9 w-9 animate-pulse"
-                        aria-hidden="true"
-                      />
-                    </div>
-                  ) : isDragActive ? (
-                    <div className="text-muted-foreground grid place-items-center gap-2 sm:px-5">
-                      <Icons.upload
-                        className={cn(
-                          "h-8 w-8",
-                          isDragActive && "animate-bounce"
-                        )}
-                        aria-hidden="true"
-                      />
-                      <p className="text-base font-medium">
-                        Drop the file here
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="grid place-items-center gap-1 sm:px-5">
-                      <Icons.upload
-                        className="text-muted-foreground h-8 w-8"
-                        aria-hidden="true"
-                      />
-                      <p className="text-muted-foreground mt-2 text-base font-medium">
-                        Drag {`'n'`} drop file here, or click to select file
-                      </p>
-                      <p className="text-sm text-slate-500">
-                        Please upload file with size less than{" "}
-                        {formatBytes(maxSize)}
-                      </p>
-                    </div>
-                  )}
+          <ModalBody className="my-4">
+            <p className="text-muted-foreground absolute left-5 top-4 text-base font-medium">
+              Upload your images
+            </p>
+            <div
+              {...getRootProps()}
+              className={cn(
+                "border-muted-foreground/25 hover:bg-muted/25 group relative mt-8 grid h-48 w-full cursor-pointer place-items-center rounded-lg border-2 border-dashed px-5 py-2.5 text-center transition",
+                "focus-visible:ring-ring mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+                isDragActive && "border-muted-foreground/50",
+                disabled && "pointer-events-none opacity-60"
+              )}
+              {...props}
+            >
+              <input {...getInputProps()} />
+              {isUploading ? (
+                <div className="group grid w-full place-items-center gap-1 sm:px-10">
+                  <Icons.upload
+                    className="text-muted-foreground h-9 w-9 animate-pulse"
+                    aria-hidden="true"
+                  />
                 </div>
-                <p className="text-muted-foreground text-center text-sm font-medium">
-                  You can upload up to 2 images
-                </p>
-                {files?.length ? (
-                  <div className="grid gap-5">
-                    {files?.map((file, i) => (
-                      <FileCard
-                        key={i}
-                        i={i}
-                        files={files}
-                        setFiles={setFiles}
-                        file={file}
-                      />
-                    ))}
-                  </div>
-                ) : null}
-                {files?.length ? (
-                  <Button
-                    type="button"
-                    variant="shadow"
-                    size="sm"
-                    className="mt-2.5 w-full"
-                    onClick={() => setFiles(null)}
-                  >
-                    <Icons.trash className="mr-2 h-4 w-4" aria-hidden="true" />
-                    Remove All
-                    <span className="sr-only">Remove all</span>
-                  </Button>
-                ) : null}
-              </ModalBody>
-            </>
-          )}
+              ) : isDragActive ? (
+                <div className="text-muted-foreground grid place-items-center gap-2 sm:px-5">
+                  <Icons.upload
+                    className={cn("h-8 w-8", isDragActive && "animate-bounce")}
+                    aria-hidden="true"
+                  />
+                  <p className="text-base font-medium">Drop the file here</p>
+                </div>
+              ) : (
+                <div className="grid place-items-center gap-1 sm:px-5">
+                  <Icons.upload
+                    className="text-muted-foreground h-8 w-8"
+                    aria-hidden="true"
+                  />
+                  <p className="text-muted-foreground mt-2 text-base font-medium">
+                    Drag {`'n'`} drop file here, or click to select file
+                  </p>
+                  <p className="text-sm text-slate-500">
+                    Please upload file with size less than{" "}
+                    {formatBytes(maxSize)}
+                  </p>
+                </div>
+              )}
+            </div>
+            <p className="text-muted-foreground text-center text-sm font-medium">
+              You can upload up to 2 images
+            </p>
+            {files?.length ? (
+              <div className="grid gap-5">
+                {files?.map((file, i) => (
+                  <FileCard
+                    key={i}
+                    i={i}
+                    files={files}
+                    setFiles={setFiles}
+                    file={file}
+                  />
+                ))}
+              </div>
+            ) : null}
+            {files?.length ? (
+              <Button
+                type="button"
+                variant="shadow"
+                size="sm"
+                className="mt-2.5 w-full"
+                onClick={() => setFiles(null)}
+              >
+                <Icons.trash className="mr-2 h-4 w-4" aria-hidden="true" />
+                Remove All
+                <span className="sr-only">Remove all</span>
+              </Button>
+            ) : null}
+          </ModalBody>
         </ModalContent>
       </Modal>
     </>

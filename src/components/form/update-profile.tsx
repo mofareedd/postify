@@ -41,6 +41,7 @@ export default function UpdateProfile({
     defaultValues: {
       name: session!.user.name ?? "",
       username: session!.user.username ?? "",
+      bio: session!.user.bio ?? "",
     },
   })
 

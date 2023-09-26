@@ -1,11 +1,14 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
+import { UploadedFile } from "@/types"
+import { createId } from "@paralleldrive/cuid2"
 import { relations, sql } from "drizzle-orm"
 import {
   bigint,
   index,
   int,
+  json,
   mysqlTable,
   primaryKey,
   text,
@@ -37,6 +40,7 @@ export const users = mysqlTable("user", {
 
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
+  posts: many(posts),
 }))
 
 export const accounts = mysqlTable(
@@ -95,3 +99,59 @@ export const verificationTokens = mysqlTable(
     compoundKey: primaryKey(vt.identifier, vt.token),
   })
 )
+
+export const posts = mysqlTable("post", {
+  id: varchar("id", { length: 128 })
+    .$defaultFn(() => createId())
+    .notNull()
+    .primaryKey(),
+  content: text("content").notNull(),
+  images: json("images").$type<UploadedFile[] | null>().default(null),
+  authorId: varchar("authorId", { length: 255 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow(),
+})
+
+export const postsRelations = relations(posts, ({ one, many }) => ({
+  author: one(users, {
+    fields: [posts.authorId],
+    references: [users.id],
+  }),
+  comments: many(comments),
+}))
+
+export const comments = mysqlTable("comment", {
+  id: varchar("id", { length: 128 })
+    .$defaultFn(() => createId())
+    .notNull()
+    .primaryKey(),
+  content: text("content").notNull(),
+  postId: varchar("postId", { length: 128 }).notNull(),
+  authorId: varchar("authorId", { length: 255 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow(),
+})
+
+export const commentsRelations = relations(comments, ({ one }) => ({
+  posts: one(posts, {
+    fields: [comments.postId],
+    references: [posts.id],
+  }),
+  author: one(users, {
+    fields: [comments.authorId],
+    references: [users.id],
+  }),
+}))
+
+export type PostType = typeof posts.$inferSelect
+export type CommentsType = typeof comments.$inferSelect
+export type UserType = typeof users.$inferSelect
+
+// types including relations
+
+export type PostTypeWithRelations = PostType & {
+  author: UserType
+  comments: CommentsType[]
+}
+
+export type CommentTypeWithRelations = CommentsType & {
+  author: UserType
+}

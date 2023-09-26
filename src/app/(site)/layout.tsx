@@ -6,10 +6,8 @@ import SiteHeader from "@/components/layouts/site-header"
 
 export default async function MainLayout({
   children,
-  modal,
 }: {
   children: React.ReactNode
-  modal: React.ReactNode
 }) {
   const session = await getServerSession(authOptions)
   if (!session) {
@@ -24,7 +22,6 @@ export default async function MainLayout({
     <div className="flex flex-col gap-10">
       <SiteHeader />
       {children}
-      {modal}
     </div>
   )
 }

@@ -27,3 +27,9 @@ export function catchError(err: unknown) {
     return toast("Something went wrong, please try again later.")
   }
 }
+
+export function isArrayOfFile(files: unknown): files is File[] {
+  const isArray = Array.isArray(files)
+  if (!isArray) return false
+  return files.every((file) => file instanceof File)
+}
