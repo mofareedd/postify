@@ -1,11 +1,14 @@
 import {
+  Bookmark,
   Copy,
   Flag,
   Github,
+  Heart,
   Loader2,
   LogIn,
   LucideIcon,
   LucideProps,
+  MessageCircle,
   Send,
   TrashIcon,
   Upload,
@@ -55,4 +58,7 @@ export const Icons = {
   flag: Flag,
   spinner: Loader2,
   send: Send,
+  like: Heart,
+  chat: MessageCircle,
+  bookmark: Bookmark,
 }

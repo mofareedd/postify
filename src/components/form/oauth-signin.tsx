@@ -29,7 +29,6 @@ export function OAuthSignIn() {
 
       toast.success("Signed in successfully!")
     } catch (err: any) {
-      console.log(err)
       toast.error(err instanceof Error ? err.message : "Something went wrong")
     }
     setTimeout(() => setIsLoading(null), 4000)

@@ -20,7 +20,7 @@ import { z } from "zod"
 
 import { catchError } from "@/lib/utils"
 import { profileSchema } from "@/lib/validation/profile"
-import { updateProfile } from "@/app/_actions/profile"
+import { updateProfile } from "@/app/_actions/user"
 
 type ProfileInput = z.infer<typeof profileSchema>
 

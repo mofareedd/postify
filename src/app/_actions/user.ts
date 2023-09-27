@@ -21,3 +21,15 @@ export async function updateProfile(
 
   await db.update(users).set(input).where(eq(users.id, id))
 }
+
+export async function getUserById(id: string) {
+  const user = await db.query.users.findFirst({
+    where: eq(users.id, id),
+  })
+
+  if (!user) {
+    throw new Error("User not found")
+  }
+
+  return user
+}

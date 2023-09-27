@@ -12,6 +12,8 @@ export default async function page({
   params: { userId: string; postId: string }
 }) {
   const post = await getPost(params.postId)
+
+  if (!post) return null
   return (
     <main className="flex min-h-screen flex-row gap-6 px-10 pb-10">
       <div className="flex max-w-[340px] flex-col gap-6">

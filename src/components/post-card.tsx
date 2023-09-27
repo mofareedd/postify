@@ -10,8 +10,10 @@ import {
   Button,
   Card,
   CardBody,
+  CardFooter,
   CardHeader,
   cn,
+  Divider,
   Dropdown,
   DropdownItem,
   DropdownMenu,
@@ -33,14 +35,20 @@ import { Icons } from "./icons"
 export default function PostCard({ post }: { post: PostTypeWithRelations }) {
   const { data: session } = useSession()
   return (
-    <Card className="min-h-32 h-fit w-full p-4">
+    <Card className="min-h-32 h-fit w-full">
       <PostHeader
         post={post}
         currentUserId={session?.user ? session.user.id : null}
       />
 
-      <CardBody className="px-3 py-0 text-small">
-        <p className="my-4 whitespace-pre-line">{post.content}</p>
+      <Divider />
+
+      <CardBody
+        className="px-7 text-small"
+        as={Link}
+        href={`/status/${post.id}`}
+      >
+        <p className="mb-4 mt-2 whitespace-pre-line">{post.content}</p>
         {post.images?.length ? (
           <div className="relative max-h-96 w-full overflow-hidden">
             {post.images.map((el) => (
@@ -57,6 +65,25 @@ export default function PostCard({ post }: { post: PostTypeWithRelations }) {
           </div>
         ) : null}
       </CardBody>
+      <CardFooter>
+        <div className="flex w-full items-center justify-around">
+          <button className="flex items-center gap-3">
+            <Icons.chat className="h-4 w-4" />
+            <span className="text-xs">{post.comments.length}</span>
+          </button>
+          <button className="flex items-center gap-3">
+            <Icons.like
+              className={cn(
+                "h-4 w-4 hover:text-red-500",
+                false ? "fill-red-500 text-red-500" : ""
+              )}
+            />
+          </button>
+          <button className="flex items-center gap-3">
+            <Icons.bookmark className="h-4 w-4" />
+          </button>
+        </div>
+      </CardFooter>
     </Card>
   )
 }
@@ -73,7 +100,7 @@ function PostHeader({
   const router = useRouter()
 
   return (
-    <CardHeader className="justify-between">
+    <CardHeader className="justify-between p-4">
       <Popover showArrow placement="bottom">
         <PopoverTrigger>
           <User
@@ -105,7 +132,7 @@ function PostHeader({
                   name={post.author.name ?? ""}
                 />
                 <div
-                  // onClick={() => router.push(`/${post.author.username}`)}
+                  onClick={() => router.push(`/${post.author.username}`)}
                   className="flex flex-col items-start justify-center"
                 >
                   <h4 className="text-small font-semibold leading-none text-default-600">
@@ -116,6 +143,15 @@ function PostHeader({
                   </h5>
                 </div>
               </div>
+              <Button
+                color="primary"
+                radius="full"
+                size="sm"
+                // variant={isFollowed ? "bordered" : "solid"}
+                onPress={() => router.push(`/${post.author.id}`)}
+              >
+                Visit
+              </Button>
               {/* <Button
                 className={
                   isFollowed
@@ -161,7 +197,7 @@ function PostHeader({
           <DropdownItem
             key="view"
             shortcut={<Icons.enter className="h-4 w-4" />}
-            onClick={() => router.push(`/${post.author.username}/${post.id}`)}
+            onClick={() => router.push(`/status/${post.id}`)}
           >
             View post
           </DropdownItem>
@@ -169,7 +205,7 @@ function PostHeader({
             key="copy"
             onClick={() => {
               navigator.clipboard.writeText(
-                `http://localhost:3000/posts/${post.id}` ?? ""
+                `http://localhost:3000/${post.authorId}/posts/${post.id}` ?? ""
               )
               toast.success("Link copied to clipboard")
             }}

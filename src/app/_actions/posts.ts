@@ -2,9 +2,9 @@
 
 import { revalidatePath } from "next/cache"
 import { db } from "@/db"
-import { comments, posts, PostType } from "@/db/schema"
+import { comments, posts, PostType, users } from "@/db/schema"
 import { InsertCommentProps, UploadedFile } from "@/types"
-import { asc, desc, eq } from "drizzle-orm"
+import { asc, desc, eq, sql } from "drizzle-orm"
 import { utapi } from "uploadthing/server"
 import { z } from "zod"
 
@@ -26,6 +26,19 @@ export async function getAllPosts() {
   return fetchPosts
 }
 
+export async function getUserPosts(id: string) {
+  const fetchPosts = await db.query.posts.findMany({
+    where: eq(posts.authorId, id),
+    with: {
+      author: true,
+      comments: true,
+    },
+    orderBy: [desc(posts.createdAt)],
+  })
+
+  return fetchPosts
+}
+
 export async function getPost(id: string) {
   const post = await db.query.posts.findFirst({
     where: eq(posts.id, id),
@@ -39,9 +52,9 @@ export async function getPost(id: string) {
     },
   })
 
-  if (!post) {
-    throw new Error("Post not found")
-  }
+  // if (!post) {
+  //   throw new Error("Post not found")
+  // }
 
   return post
 }
