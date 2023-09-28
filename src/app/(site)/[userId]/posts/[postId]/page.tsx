@@ -1,5 +1,7 @@
 import React from "react"
+import { getServerSession } from "next-auth"
 
+import { authOptions } from "@/lib/auth"
 import CommentsList from "@/components/comments-list"
 import ProfileInfo from "@/components/home/profile-info"
 import Suggests from "@/components/home/suggests"
@@ -11,7 +13,9 @@ export default async function page({
 }: {
   params: { userId: string; postId: string }
 }) {
-  const post = await getPost(params.postId)
+  const session = await getServerSession(authOptions)
+
+  const post = await getPost(params.postId, session?.user.id ?? null)
 
   if (!post) return null
   return (

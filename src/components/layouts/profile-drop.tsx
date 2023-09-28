@@ -1,6 +1,7 @@
 "use client"
 
 import React from "react"
+import { useRouter } from "next/navigation"
 import {
   Avatar,
   Dropdown,
@@ -14,6 +15,7 @@ import ModeToggle from "./mode-toggle"
 
 export default function ProfileDrop() {
   const { data: session } = useSession()
+  const router = useRouter()
 
   return (
     <Dropdown placement="bottom-end">
@@ -30,13 +32,18 @@ export default function ProfileDrop() {
         aria-label="Profile Actions"
         variant="flat"
       >
-        <DropdownItem key="profile" className="h-14 gap-2">
+        <DropdownItem key="" className="h-14 gap-2">
           <p className="font-semibold">Signed in as</p>
           <p className="max-w-[150px] truncate font-semibold">
             {session?.user?.email}
           </p>
         </DropdownItem>
-        <DropdownItem key="settings">My Settings</DropdownItem>
+        <DropdownItem
+          key="profile"
+          onClick={() => router.push(`${session?.user.id}`)}
+        >
+          My Profile
+        </DropdownItem>
         <DropdownItem key="team_settings">Team Settings</DropdownItem>
         <DropdownItem key="analytics">Analytics</DropdownItem>
         <DropdownItem key="system">System</DropdownItem>

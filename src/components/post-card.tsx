@@ -28,12 +28,30 @@ import { MoreHorizontal } from "lucide-react"
 import { useSession } from "next-auth/react"
 import { toast } from "sonner"
 
+import usePostActions from "@/hooks/usePostActions"
 import usePostDeletion from "@/hooks/usePostDeletion"
 
 import { Icons } from "./icons"
 
 export default function PostCard({ post }: { post: PostTypeWithRelations }) {
+  const [isLiked, setIsLiked] = React.useState<"0" | "1">(post.isLiked ?? "0")
   const { data: session } = useSession()
+  const { likeHandler, isLoading } = usePostActions()
+
+  function actionHandler(type: "like" | "bookmark") {
+    if (!session?.user.id)
+      return toast.error("You need to be logged in to like a post")
+
+    if (type === "like") {
+      setIsLiked((prev) => (prev === "0" ? "1" : "0"))
+      likeHandler({
+        postId: post.id,
+        userId: session?.user.id,
+        action: post.isLiked,
+      })
+      return
+    }
+  }
   return (
     <Card className="min-h-32 h-fit w-full">
       <PostHeader
@@ -46,7 +64,7 @@ export default function PostCard({ post }: { post: PostTypeWithRelations }) {
       <CardBody
         className="px-7 text-small"
         as={Link}
-        href={`/status/${post.id}`}
+        href={`${post.authorId}/posts/${post.id}`}
       >
         <p className="mb-4 mt-2 whitespace-pre-line">{post.content}</p>
         {post.images?.length ? (
@@ -69,15 +87,24 @@ export default function PostCard({ post }: { post: PostTypeWithRelations }) {
         <div className="flex w-full items-center justify-around">
           <button className="flex items-center gap-3">
             <Icons.chat className="h-4 w-4" />
-            <span className="text-xs">{post.comments.length}</span>
+            <span className="text-xs">
+              {post.comments ? post.comments.length : post.commentCount}
+            </span>
           </button>
-          <button className="flex items-center gap-3">
+          <button
+            disabled={isLoading}
+            onClick={() => actionHandler("like")}
+            className="group flex items-center gap-3"
+          >
             <Icons.like
               className={cn(
-                "h-4 w-4 hover:text-red-500",
-                false ? "fill-red-500 text-red-500" : ""
+                "h-4 w-4",
+                isLiked === "1"
+                  ? "fill-red-500 text-red-500 group-hover:opacity-80"
+                  : ""
               )}
             />
+            <span className="text-xs">{post?.likeCount || 0}</span>
           </button>
           <button className="flex items-center gap-3">
             <Icons.bookmark className="h-4 w-4" />
@@ -197,7 +224,7 @@ function PostHeader({
           <DropdownItem
             key="view"
             shortcut={<Icons.enter className="h-4 w-4" />}
-            onClick={() => router.push(`/status/${post.id}`)}
+            onClick={() => router.push(`/${post.authorId}/posts/${post.id}`)}
           >
             View post
           </DropdownItem>

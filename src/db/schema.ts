@@ -25,22 +25,30 @@ import { AdapterAccount } from "next-auth/adapters"
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
 
-export const users = mysqlTable("user", {
-  id: varchar("id", { length: 255 }).notNull().primaryKey(),
-  name: varchar("name", { length: 255 }),
-  username: varchar("username", { length: 255 }),
-  bio: varchar("bio", { length: 255 }).default(""),
-  email: varchar("email", { length: 255 }).notNull(),
-  emailVerified: timestamp("emailVerified", {
-    mode: "date",
-    fsp: 3,
-  }).default(sql`CURRENT_TIMESTAMP(3)`),
-  image: varchar("image", { length: 255 }),
-})
+export const users = mysqlTable(
+  "user",
+  {
+    id: varchar("id", { length: 255 }).notNull().primaryKey(),
+    name: varchar("name", { length: 255 }),
+    username: varchar("username", { length: 255 }),
+    bio: varchar("bio", { length: 255 }).default(""),
+    email: varchar("email", { length: 255 }).notNull(),
+    emailVerified: timestamp("emailVerified", {
+      mode: "date",
+      fsp: 3,
+    }).default(sql`CURRENT_TIMESTAMP(3)`),
+    image: varchar("image", { length: 255 }),
+  },
+  (table) => ({
+    usernameIdx: index("username_idx").on(table.username),
+  })
+)
 
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
   posts: many(posts),
+  comments: many(comments),
+  likes: many(likes),
 }))
 
 export const accounts = mysqlTable(
@@ -117,6 +125,7 @@ export const postsRelations = relations(posts, ({ one, many }) => ({
     references: [users.id],
   }),
   comments: many(comments),
+  likes: many(likes),
 }))
 
 export const comments = mysqlTable("comment", {
@@ -141,15 +150,41 @@ export const commentsRelations = relations(comments, ({ one }) => ({
   }),
 }))
 
+export const likes = mysqlTable("likes", {
+  id: varchar("id", { length: 128 })
+    .$default(() => createId())
+    .notNull()
+    .primaryKey(),
+
+  postId: varchar("postId", { length: 128 }).notNull(),
+  userId: varchar("userId", { length: 255 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow(),
+})
+
+export const likesRelations = relations(likes, ({ one }) => ({
+  postId: one(posts, {
+    fields: [likes.postId],
+    references: [posts.id],
+  }),
+  userId: one(users, {
+    fields: [likes.userId],
+    references: [users.id],
+  }),
+}))
+
 export type PostType = typeof posts.$inferSelect
 export type CommentsType = typeof comments.$inferSelect
 export type UserType = typeof users.$inferSelect
+export type LikeType = typeof likes.$inferSelect
 
 // types including relations
 
 export type PostTypeWithRelations = PostType & {
   author: UserType
-  comments: CommentsType[]
+  comments?: CommentsType[]
+  commentCount?: string
+  likeCount?: string
+  isLiked: "0" | "1"
 }
 
 export type CommentTypeWithRelations = CommentsType & {

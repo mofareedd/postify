@@ -20,7 +20,7 @@ export default async function UserLayout({
   return (
     <main className="mx-auto min-h-screen w-full max-w-5xl pb-10">
       <Banner user={user} />
-      <UserTabs />
+      <UserTabs userId={user.id} />
       <div className="mt-4 flex gap-4">
         {children}
         <div className="flex w-80 flex-col gap-6">

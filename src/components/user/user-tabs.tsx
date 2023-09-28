@@ -1,12 +1,15 @@
 "use client"
 
 import React, { useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { Card, CardBody, CardHeader, Tab, Tabs } from "@nextui-org/react"
 
 type TabsLinkTypes = "posts" | "media" | "likes"
-export default function UserTabs() {
-  const [activeTab, setActiveTab] = React.useState<TabsLinkTypes>("posts")
+export default function UserTabs({ userId }: { userId: string }) {
+  const pathname = usePathname()
+  const [activeTab, setActiveTab] = React.useState<TabsLinkTypes>(
+    pathname.includes("/likes") ? "likes" : "posts"
+  )
   const router = useRouter()
   let tabs: { id: TabsLinkTypes; label: string }[] = [
     {
@@ -24,7 +27,11 @@ export default function UserTabs() {
   ]
 
   function handleTabChange(tab: "posts" | "media" | "likes") {
-    router.push(tab)
+    if (tab === "posts") {
+      router.push(`/${userId}`)
+      return
+    }
+    router.push(`/${userId}/${tab}`)
   }
 
   useEffect(() => {
@@ -36,10 +43,12 @@ export default function UserTabs() {
       <Tabs
         aria-label="Dynamic tabs"
         items={tabs}
+        selectedKey={activeTab}
         className="w-full"
         fullWidth
         disabledKeys={["media"]}
         onSelectionChange={(key) => setActiveTab(key as TabsLinkTypes)}
+        // onSelectionChange={(key) => handleTabChange(key as TabsLinkTypes)}
       >
         {(item) => <Tab key={item.id} title={item.label} />}
       </Tabs>
