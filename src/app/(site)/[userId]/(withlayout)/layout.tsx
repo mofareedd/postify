@@ -25,7 +25,7 @@ export default async function UserLayout({
         {children}
         <div className="flex w-80 flex-col gap-6">
           <MediaGallary />
-          <Suggests />
+          {/* <Suggests /> */}
         </div>
       </div>
     </main>
