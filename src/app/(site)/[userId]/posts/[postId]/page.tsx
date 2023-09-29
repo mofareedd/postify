@@ -22,7 +22,7 @@ export default async function page({
     <main className="flex min-h-screen flex-row gap-6 px-10 pb-10">
       <div className="flex max-w-[340px] flex-col gap-6">
         <ProfileInfo />
-        <Suggests />
+        {/* <Suggests /> */}
       </div>
       <PostCard post={post} />
       <div className="w-full max-w-sm">
