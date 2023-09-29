@@ -7,6 +7,13 @@ import { z } from "zod"
 
 import { profileSchema } from "@/lib/validation/profile"
 
+export async function getAllUsers() {
+  const users = await db.query.users.findMany({
+    limit: 10,
+  })
+
+  return users
+}
 export async function updateProfile(
   input: z.infer<typeof profileSchema>,
   id: string

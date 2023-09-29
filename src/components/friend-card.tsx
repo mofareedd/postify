@@ -1,22 +1,21 @@
 import React from "react"
+import { UserType } from "@/db/schema"
 import { Button, Card, User } from "@nextui-org/react"
 import { toast } from "sonner"
 
 interface IProps {
-  name: string
-  title: string
-  src?: string
+  user: UserType
 }
-export default function FriendCard(props: IProps) {
+export default function FriendCard({ user }: IProps) {
   const [isFollowed, setIsFollowed] = React.useState(false)
 
   return (
     <div className="flex flex-row items-center justify-between">
       <User
-        name={props.name}
-        description={props.title}
+        name={user.name}
+        description={user?.username}
         avatarProps={{
-          src: props.src ?? "",
+          src: user.image ?? "",
         }}
       />
       <Button

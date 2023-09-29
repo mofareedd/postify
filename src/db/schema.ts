@@ -172,6 +172,11 @@ export const likesRelations = relations(likes, ({ one }) => ({
   }),
 }))
 
+export const followers = mysqlTable("followers", {
+  followingId: varchar("followingId", { length: 255 }).notNull(),
+  followedId: varchar("followedId", { length: 255 }).notNull(),
+})
+
 export type PostType = typeof posts.$inferSelect
 export type CommentsType = typeof comments.$inferSelect
 export type UserType = typeof users.$inferSelect

@@ -47,6 +47,10 @@ export async function getUserPosts(id: string, visitorUserId: string | null) {
         sql<string>`(SELECT COUNT(*) FROM comment WHERE comment.postId = posts.id)`.as(
           "comment_count"
         ),
+      likeCount:
+        sql<string>`(SELECT COUNT(*) FROM likes WHERE likes.postId = posts.id)`.as(
+          "like_count"
+        ),
       isLiked: sql<
         "0" | "1"
       >`EXISTS (SELECT 1 FROM ${likes} WHERE likes.postId = posts.id AND likes.userId = ${visitorUserId})`.as(
@@ -83,9 +87,9 @@ export async function getPost(id: string, visitorUserId: string | null) {
     },
   })
 
-  // if (!post) {
-  //   throw new Error("Post not found")
-  // }
+  if (!post) {
+    throw new Error("Post not found")
+  }
 
   return post
 }
