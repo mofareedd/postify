@@ -1,22 +1,18 @@
 "use client"
 
-import { useState } from "react"
-import {
-  Avatar,
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-} from "@nextui-org/react"
-import { SettingsIcon } from "lucide-react"
-import { useSession } from "next-auth/react"
+import { UserType } from "@/db/schema"
+import { Avatar, Card, CardBody, CardHeader } from "@nextui-org/react"
+import { Session } from "next-auth"
 
 import UpdateProfile from "../form/update-profile"
 
-export default function ProfileInfo() {
-  const { data: session } = useSession()
-
+export default function ProfileInfo({
+  user,
+  isMyProfile = false,
+}: {
+  user: UserType
+  isMyProfile?: boolean
+}) {
   return (
     <Card className="h-fit w-full">
       <CardHeader className="justify-between">
@@ -25,34 +21,23 @@ export default function ProfileInfo() {
             isBordered
             radius="full"
             size="md"
-            src={session?.user?.image ?? ""}
-            name={session?.user.name ?? ""}
-            // src="https://i.pravatar.cc/150?u=a04258114e29026702d"
+            src={user?.image ?? ""}
+            name={user?.name ?? ""}
           />
           <div className="flex flex-col items-start justify-center gap-1">
             <h4 className="text-small font-semibold leading-none text-default-600">
-              {session!.user?.name}
+              {user?.name}
             </h4>
             <h5 className="text-small tracking-tight text-default-400">
-              @{session?.user?.username}
+              @{user?.username}
             </h5>
           </div>
         </div>
-        <UpdateProfile session={session} />
+        {isMyProfile ? <UpdateProfile user={user} /> : null}
       </CardHeader>
       <CardBody className="my-2 px-3 py-0 text-small text-default-400">
-        <p>{session?.user?.bio}</p>
+        <p>{user?.bio}</p>
       </CardBody>
-      <CardFooter className="gap-3">
-        <div className="flex gap-1">
-          <p className="text-small font-semibold text-default-400">4</p>
-          <p className=" text-small text-default-400">Following</p>
-        </div>
-        <div className="flex gap-1">
-          <p className="text-small font-semibold text-default-400">97.1K</p>
-          <p className="text-small text-default-400">Followers</p>
-        </div>
-      </CardFooter>
     </Card>
   )
 }

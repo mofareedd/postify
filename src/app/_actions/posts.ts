@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache"
 import { db } from "@/db"
-import { comments, likes, posts, PostType, users } from "@/db/schema"
+import { comments, follows, likes, posts, PostType, users } from "@/db/schema"
 import { InsertCommentProps, UploadedFile } from "@/types"
 import { and, desc, eq, sql } from "drizzle-orm"
 import { utapi } from "uploadthing/server"
@@ -14,7 +14,14 @@ export async function getAllPosts(currentUserId?: string | null) {
   const fetchPosts = await db.query.posts.findMany({
     orderBy: [desc(posts.createdAt)],
     with: {
-      author: true,
+      author: {
+        extras: {
+          isFollowed:
+            sql<boolean>`EXISTS (SELECT 1 FROM ${follows} WHERE follows.following = posts.authorId AND follows.follower = ${currentUserId})`.as(
+              "isFollowed"
+            ),
+        },
+      },
     },
     extras: {
       commentCount:

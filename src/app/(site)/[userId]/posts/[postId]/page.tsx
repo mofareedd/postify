@@ -20,8 +20,11 @@ export default async function page({
   if (!post) return null
   return (
     <main className="flex min-h-screen flex-row gap-6 px-10 pb-10">
-      <div className="flex max-w-[340px] flex-col gap-6">
-        <ProfileInfo />
+      <div className="flex w-full max-w-[340px] flex-col gap-6">
+        <ProfileInfo
+          user={post.author}
+          isMyProfile={session?.user.id === post.authorId}
+        />
         {/* <Suggests /> */}
       </div>
       <PostCard post={post} />

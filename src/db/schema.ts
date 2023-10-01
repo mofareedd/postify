@@ -49,6 +49,8 @@ export const usersRelations = relations(users, ({ many }) => ({
   posts: many(posts),
   comments: many(comments),
   likes: many(likes),
+  follower: many(follows, { relationName: "follower" }),
+  following: many(follows, { relationName: "following" }),
 }))
 
 export const accounts = mysqlTable(
@@ -172,14 +174,26 @@ export const likesRelations = relations(likes, ({ one }) => ({
   }),
 }))
 
-export const followers = mysqlTable("followers", {
-  followingId: varchar("followingId", { length: 255 }).notNull(),
-  followedId: varchar("followedId", { length: 255 }).notNull(),
+export const follows = mysqlTable("follows", {
+  follower: varchar("follower", { length: 255 }).notNull(),
+  following: varchar("following", { length: 255 }).notNull(),
 })
 
+export const followsRelations = relations(follows, ({ one }) => ({
+  follower: one(users, {
+    fields: [follows.follower],
+    references: [users.id],
+    relationName: "follower",
+  }),
+  following: one(users, {
+    fields: [follows.following],
+    references: [users.id],
+    relationName: "following",
+  }),
+}))
 export type PostType = typeof posts.$inferSelect
 export type CommentsType = typeof comments.$inferSelect
-export type UserType = typeof users.$inferSelect
+export type UserType = typeof users.$inferSelect & { isFollowed?: "0" | "1" }
 export type LikeType = typeof likes.$inferSelect
 
 // types including relations

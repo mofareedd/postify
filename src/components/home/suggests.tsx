@@ -2,10 +2,10 @@
 
 import React from "react"
 import { UserType } from "@/db/schema"
-import { Card } from "@nextui-org/react"
+import { Card, User } from "@nextui-org/react"
 import { useSession } from "next-auth/react"
 
-import FriendCard from "../friend-card"
+import FollowsBtn from "../follows-btn"
 
 export default function Suggests({ users }: { users: UserType[] }) {
   const { data: session } = useSession()
@@ -15,7 +15,21 @@ export default function Suggests({ users }: { users: UserType[] }) {
         {users && users.length
           ? users.map((user) => {
               if (session?.user.id === user.id) return null
-              return <FriendCard key={user.id} user={user} />
+              return (
+                <div
+                  key={user.id}
+                  className="flex flex-row items-center justify-between"
+                >
+                  <User
+                    name={user.name}
+                    description={user?.username}
+                    avatarProps={{
+                      src: user.image ?? "",
+                    }}
+                  />{" "}
+                  <FollowsBtn user={user} />
+                </div>
+              )
             })
           : null}
       </Card>

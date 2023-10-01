@@ -1,6 +1,7 @@
 "use client"
 
 import React from "react"
+import { UserType } from "@/db/schema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import {
   Button,
@@ -24,11 +25,7 @@ import { updateProfile } from "@/app/_actions/user"
 
 type ProfileInput = z.infer<typeof profileSchema>
 
-export default function UpdateProfile({
-  session,
-}: {
-  session: Session | null
-}) {
+export default function UpdateProfile({ user }: { user: UserType }) {
   const [isLoading, setIsLoading] = React.useState(false)
   const { isOpen, onOpen, onClose } = useDisclosure()
 
@@ -39,16 +36,16 @@ export default function UpdateProfile({
   } = useForm<ProfileInput>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      name: session!.user.name ?? "",
-      username: session!.user.username ?? "",
-      bio: session!.user.bio ?? "",
+      name: user.name ?? "",
+      username: user.username ?? "",
+      bio: user.bio ?? "",
     },
   })
 
   async function onSubmit(data: ProfileInput) {
     setIsLoading(true)
     try {
-      await updateProfile(data, session!.user.id)
+      await updateProfile(data, user.id)
 
       toast.success("Updated profile successfully!")
       window.location.reload()

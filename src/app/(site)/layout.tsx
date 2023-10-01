@@ -14,7 +14,7 @@ export default async function MainLayout({
     redirect("/signin")
   }
 
-  if (!session.user.username) {
+  if (session && !session.user.username) {
     redirect("/onboard")
   }
 

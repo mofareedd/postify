@@ -31,6 +31,7 @@ import { toast } from "sonner"
 import usePostActions from "@/hooks/usePostActions"
 import usePostDeletion from "@/hooks/usePostDeletion"
 
+import FollowsBtn from "./follows-btn"
 import { Icons } from "./icons"
 
 export default function PostCard({ post }: { post: PostTypeWithRelations }) {
@@ -106,8 +107,8 @@ export default function PostCard({ post }: { post: PostTypeWithRelations }) {
             />
             <span className="text-xs">{post?.likeCount || 0}</span>
           </button>
-          <button className="flex items-center gap-3">
-            <Icons.bookmark className="h-4 w-4" />
+          <button disabled className="flex items-center gap-3">
+            <Icons.bookmark className="h-4 w-4 text-gray-500" />
           </button>
         </div>
       </CardFooter>
@@ -170,29 +171,13 @@ function PostHeader({
                   </h5>
                 </div>
               </div>
-              <Button
-                color="primary"
-                radius="full"
-                size="sm"
-                // variant={isFollowed ? "bordered" : "solid"}
-                onPress={() => router.push(`/${post.author.id}`)}
-              >
-                Visit
-              </Button>
-              {/* <Button
-                className={
-                  isFollowed
-                    ? "border-default-200 bg-transparent text-foreground"
-                    : ""
-                }
-                color="primary"
-                radius="full"
-                size="sm"
-                variant={isFollowed ? "bordered" : "solid"}
-                onPress={() => setIsFollowed(!isFollowed)}
-              >
-                {isFollowed ? "Unfollow" : "Follow"}
-              </Button> */}
+
+              <FollowsBtn
+                user={{
+                  ...post.author,
+                  isFollowed: post.author.isFollowed ? "1" : "0",
+                }}
+              />
             </CardHeader>
             <CardBody className="px-3 py-0">
               <p className="pl-px text-small text-default-500">
