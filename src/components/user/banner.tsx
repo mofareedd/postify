@@ -34,7 +34,7 @@ export default function Banner({ user }: { user: UserType }) {
 
         <div className="flex flex-col justify-between">
           {session?.user.id === user.id ? (
-            <UpdateProfile session={session} />
+            <UpdateProfile user={session.user} />
           ) : (
             <Button
               className={

@@ -1,4 +1,5 @@
 import React from "react"
+import { useRouter } from "next/navigation"
 import { generateReactHelpers } from "@uploadthing/react/hooks"
 import { toast } from "sonner"
 import { z } from "zod"
@@ -12,11 +13,14 @@ const { useUploadThing } = generateReactHelpers<OurFileRouter>()
 function useCreatePost() {
   const [isLoading, setIsLoading] = React.useState(false)
   const { isUploading, startUpload } = useUploadThing("imageUploader")
+  const router = useRouter()
 
   async function createPostHandler(
     data: z.infer<typeof postSchema>,
     currentUserId: string
   ) {
+    if (!currentUserId)
+      return toast.error("You must be logged in to create a post")
     setIsLoading(true)
     try {
       const images = isArrayOfFile(data.images)
@@ -36,6 +40,7 @@ function useCreatePost() {
         authorId: currentUserId,
       })
 
+      router.refresh()
       toast.success("Post created successfully")
     } catch (error) {
       catchError(error)

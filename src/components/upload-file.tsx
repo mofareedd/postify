@@ -112,7 +112,7 @@ export default function UploadFile<TFieldValues extends FieldValues>({
               )}
             </div>
             <p className="text-muted-foreground text-center text-sm font-medium">
-              You can upload up to 2 images
+              You can upload up to images
             </p>
             {files?.length ? (
               <div className="grid gap-5">

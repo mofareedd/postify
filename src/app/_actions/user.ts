@@ -2,14 +2,19 @@
 
 import { db } from "@/db"
 import { follows, users } from "@/db/schema"
-import { and, eq, sql } from "drizzle-orm"
+import { and, eq, isNotNull, sql } from "drizzle-orm"
 import { z } from "zod"
 
 import { profileSchema } from "@/lib/validation/profile"
 
 export async function getAllUsers(id?: string | null) {
-  const users = await db.query.users.findMany({
+  const fetchUsers = await db.query.users.findMany({
+    where: isNotNull(users.username),
     limit: 10,
+    columns: {
+      email: false,
+      emailVerified: false,
+    },
     extras: {
       isFollowed: sql<
         "0" | "1"
@@ -19,7 +24,7 @@ export async function getAllUsers(id?: string | null) {
     },
   })
 
-  return users
+  return fetchUsers
 }
 export async function updateProfile(
   input: z.infer<typeof profileSchema>,
@@ -39,6 +44,10 @@ export async function updateProfile(
 export async function getUserById(id: string) {
   const user = await db.query.users.findFirst({
     where: eq(users.id, id),
+    columns: {
+      email: false,
+      emailVerified: false,
+    },
   })
 
   if (!user) {

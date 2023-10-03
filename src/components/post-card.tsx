@@ -5,6 +5,7 @@ import NextImage from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { PostTypeWithRelations } from "@/db/schema"
+import { UploadedFile } from "@/types"
 import {
   Avatar,
   Button,
@@ -19,9 +20,12 @@ import {
   DropdownMenu,
   DropdownTrigger,
   Image,
+  Modal,
+  ModalContent,
   Popover,
   PopoverContent,
   PopoverTrigger,
+  useDisclosure,
   User,
 } from "@nextui-org/react"
 import { MoreHorizontal } from "lucide-react"
@@ -62,26 +66,12 @@ export default function PostCard({ post }: { post: PostTypeWithRelations }) {
 
       <Divider />
 
-      <CardBody
-        className="px-7 text-small"
-        as={Link}
-        href={`${post.authorId}/posts/${post.id}`}
-      >
-        <p className="mb-4 mt-2 whitespace-pre-line">{post.content}</p>
+      <CardBody className="px-7 text-small">
+        <Link href={`${post.authorId}/posts/${post.id}`}>
+          <p className="mb-4 mt-2 whitespace-pre-line">{post.content}</p>
+        </Link>
         {post.images?.length ? (
-          <div className="relative max-h-96 w-full overflow-hidden">
-            {post.images.map((el) => (
-              <Image
-                as={NextImage}
-                key={el.id}
-                width={700}
-                height={700}
-                className="object-contain"
-                src={el.url}
-                alt=""
-              />
-            ))}
-          </div>
+          <PostImageModal postImage={post.images[0]} />
         ) : null}
       </CardBody>
       <CardFooter>
@@ -124,7 +114,6 @@ function PostHeader({
   currentUserId: string | null
 }) {
   const { deletePostHandler, isLoading } = usePostDeletion(post, currentUserId)
-  const [isFollowed, setIsFollowed] = React.useState(false)
   const router = useRouter()
 
   return (
@@ -145,7 +134,7 @@ function PostHeader({
         <PopoverContent className="p-1">
           <Card
             shadow="none"
-            className="max-w-[300px] border-none bg-transparent"
+            className="w-full min-w-[300px] max-w-xs  border-none bg-transparent"
           >
             <CardHeader className="justify-between">
               <div
@@ -159,8 +148,9 @@ function PostHeader({
                   src={post.author.image ?? ""}
                   name={post.author.name ?? ""}
                 />
+
                 <div
-                  onClick={() => router.push(`/${post.author.username}`)}
+                  onClick={() => router.push(`/${post.author.id}`)}
                   className="flex flex-col items-start justify-center"
                 >
                   <h4 className="text-small font-semibold leading-none text-default-600">
@@ -172,25 +162,24 @@ function PostHeader({
                 </div>
               </div>
 
-              <FollowsBtn
-                user={{
-                  ...post.author,
-                  isFollowed: post.author.isFollowed ? "1" : "0",
-                }}
-              />
+              {post.authorId !== currentUserId ? (
+                <FollowsBtn
+                  user={{
+                    ...post.author,
+                    isFollowed: post.author.isFollowed ? "1" : "0",
+                  }}
+                />
+              ) : null}
             </CardHeader>
             <CardBody className="px-3 py-0">
-              <p className="pl-px text-small text-default-500">
-                Full-stack developer, @getnextui lover she/her
-                <span aria-label="confetti" role="img">
-                  🎉
-                </span>
+              <p className="line-clamp-3 pl-px text-small text-default-500">
+                {post.author?.bio}
               </p>
             </CardBody>
           </Card>
         </PopoverContent>
       </Popover>
-      <Dropdown closeOnSelect={false}>
+      <Dropdown>
         <DropdownTrigger>
           <Button
             isIconOnly
@@ -252,5 +241,39 @@ function PostHeader({
         </DropdownMenu>
       </Dropdown>
     </CardHeader>
+  )
+}
+
+function PostImageModal({ postImage }: { postImage: UploadedFile }) {
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
+  return (
+    <div className="">
+      <div
+        onClick={onOpen}
+        className="relative max-h-96 w-full overflow-hidden"
+      >
+        <Image
+          as={NextImage}
+          width={700}
+          height={700}
+          className="object-contain"
+          src={postImage.url}
+          alt=""
+        />
+      </div>
+      <Modal size={"5xl"} isOpen={isOpen} onClose={onClose}>
+        <ModalContent className="bg-red-50">
+          <Image
+            as={NextImage}
+            width={1024}
+            height={1024}
+            className="object-contain"
+            src={postImage.url}
+            alt=""
+          />
+        </ModalContent>
+      </Modal>
+    </div>
   )
 }

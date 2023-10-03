@@ -7,10 +7,13 @@ import { Card, CardBody, CardHeader, Tab, Tabs } from "@nextui-org/react"
 type TabsLinkTypes = "posts" | "media" | "likes"
 export default function UserTabs({ userId }: { userId: string }) {
   const pathname = usePathname()
-  const [activeTab, setActiveTab] = React.useState<TabsLinkTypes>(
-    pathname.includes("/likes") ? "likes" : "posts"
-  )
   const router = useRouter()
+
+  const initialTab: TabsLinkTypes = pathname.includes("/likes")
+    ? "likes"
+    : "posts"
+
+  const [activeTab, setActiveTab] = React.useState<TabsLinkTypes>(initialTab)
   let tabs: { id: TabsLinkTypes; label: string }[] = [
     {
       id: "posts",
@@ -26,12 +29,12 @@ export default function UserTabs({ userId }: { userId: string }) {
     },
   ]
 
-  function handleTabChange(tab: "posts" | "media" | "likes") {
+  const handleTabChange = (tab: TabsLinkTypes) => {
     if (tab === "posts") {
       router.push(`/${userId}`)
-      return
+    } else {
+      router.push(`/${userId}/${tab}`)
     }
-    router.push(`/${userId}/${tab}`)
   }
 
   useEffect(() => {

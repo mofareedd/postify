@@ -74,8 +74,7 @@ function useDropUpload<TFieldValues extends FieldValues>({
       "image/*": [],
     },
     maxSize,
-    maxFiles: 2,
-    multiple: true,
+    maxFiles: 1,
   })
 
   return { getInputProps, getRootProps, isDragActive }

@@ -19,14 +19,12 @@ function usePostDeletion(
 
     setIsLoading(true)
 
-    try {
-      await deletePost(post, currentUserId)
-      toast.success("Post deleted")
-    } catch (error) {
-      catchError(error)
-    } finally {
-      setIsLoading(false)
-    }
+    toast.promise(deletePost(post, currentUserId), {
+      loading: "Deleting post...",
+      success: "Post deleted successfully",
+      error: (err: any) => catchError(err),
+      finally: () => setIsLoading(false),
+    })
   }
 
   return { isLoading, deletePostHandler }

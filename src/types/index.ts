@@ -1,3 +1,4 @@
+import { UserType } from "@/db/schema"
 import { FileWithPath } from "react-dropzone"
 
 export type FileWithPreview = FileWithPath & {
@@ -16,3 +17,5 @@ export interface InsertCommentProps {
   currentUserId: string
   postAuthorName: string
 }
+
+export type UserEmailOmitType = Omit<UserType, "email" | "emailVerified">

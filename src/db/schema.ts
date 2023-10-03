@@ -117,7 +117,9 @@ export const posts = mysqlTable("post", {
     .primaryKey(),
   content: text("content").notNull(),
   images: json("images").$type<UploadedFile[] | null>().default(null),
-  authorId: varchar("authorId", { length: 255 }).notNull(),
+  authorId: varchar("authorId", { length: 255 })
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
   createdAt: timestamp("createdAt").defaultNow(),
 })
 
@@ -193,7 +195,9 @@ export const followsRelations = relations(follows, ({ one }) => ({
 }))
 export type PostType = typeof posts.$inferSelect
 export type CommentsType = typeof comments.$inferSelect
-export type UserType = typeof users.$inferSelect & { isFollowed?: "0" | "1" }
+export type UserType = typeof users.$inferSelect & {
+  isFollowed?: "0" | "1" | boolean
+}
 export type LikeType = typeof likes.$inferSelect
 
 // types including relations

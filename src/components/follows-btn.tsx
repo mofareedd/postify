@@ -1,5 +1,5 @@
 import React from "react"
-import { UserType } from "@/db/schema"
+import { UserEmailOmitType } from "@/types"
 import { Button } from "@nextui-org/react"
 import { useSession } from "next-auth/react"
 import { toast } from "sonner"
@@ -7,7 +7,7 @@ import { toast } from "sonner"
 import useFollow from "@/hooks/useFollow"
 
 interface IProps {
-  user: UserType
+  user: UserEmailOmitType
 }
 export default function FollowsBtn({ user }: IProps) {
   const [isFollowed, setIsFollowed] = React.useState(

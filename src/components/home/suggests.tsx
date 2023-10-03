@@ -2,15 +2,16 @@
 
 import React from "react"
 import { UserType } from "@/db/schema"
+import { UserEmailOmitType } from "@/types"
 import { Card, User } from "@nextui-org/react"
 import { useSession } from "next-auth/react"
 
 import FollowsBtn from "../follows-btn"
 
-export default function Suggests({ users }: { users: UserType[] }) {
+export default function Suggests({ users }: { users: UserEmailOmitType[] }) {
   const { data: session } = useSession()
   return (
-    <div className="w-80">
+    <div className="hidden w-80 md:block">
       <Card className="flex gap-6 p-4">
         {users && users.length
           ? users.map((user) => {

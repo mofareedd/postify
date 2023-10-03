@@ -2,7 +2,6 @@
 
 import { UserType } from "@/db/schema"
 import { Avatar, Card, CardBody, CardHeader } from "@nextui-org/react"
-import { Session } from "next-auth"
 
 import UpdateProfile from "../form/update-profile"
 

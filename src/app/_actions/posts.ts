@@ -8,16 +8,18 @@ import { and, desc, eq, sql } from "drizzle-orm"
 import { utapi } from "uploadthing/server"
 import { z } from "zod"
 
-import { postSchema } from "@/lib/validation/post"
+import { getPostsInput, postSchema } from "@/lib/validation/post"
 
-export async function getAllPosts(currentUserId?: string | null) {
+export async function getAllPosts(input: z.infer<typeof getPostsInput>) {
   const fetchPosts = await db.query.posts.findMany({
     orderBy: [desc(posts.createdAt)],
+    limit: input.limit,
+    offset: input.offset,
     with: {
       author: {
         extras: {
           isFollowed:
-            sql<boolean>`EXISTS (SELECT 1 FROM ${follows} WHERE follows.following = posts.authorId AND follows.follower = ${currentUserId})`.as(
+            sql<boolean>`EXISTS (SELECT 1 FROM ${follows} WHERE follows.following = posts.authorId AND follows.follower = ${input.currentUserId})`.as(
               "isFollowed"
             ),
         },
@@ -34,13 +36,21 @@ export async function getAllPosts(currentUserId?: string | null) {
         ),
       isLiked: sql<
         "0" | "1"
-      >`EXISTS (SELECT 1 FROM ${likes} WHERE likes.postId = posts.id AND likes.userId = ${currentUserId})`.as(
+      >`EXISTS (SELECT 1 FROM ${likes} WHERE likes.postId = posts.id AND likes.userId = ${input.currentUserId})`.as(
         "is_liked"
       ),
     },
   })
 
   return fetchPosts
+}
+
+export async function postsCount() {
+  return await db
+    .select({
+      count: sql<number>`count(*)`,
+    })
+    .from(posts)
 }
 
 export async function getUserPosts(id: string, visitorUserId: string | null) {
@@ -105,30 +115,6 @@ export async function getLikedPosts(
   userId: string,
   visitorUserId: string | null
 ) {
-  // const fetchPosts = await db.query.posts.findMany({
-  //   with: {
-  //     likes: {
-  //       where: (likes, { eq }) => eq(likes.userId, userId),
-  //     },
-  //     author: true,
-  //   },
-  //   extras: {
-  //     commentsCount:
-  //       sql<string>`(SELECT COUNT(*) FROM ${comments} WHERE postId = ${posts.id})`.as(
-  //         "comments_count"
-  //       ),
-  //     likeCount:
-  //       sql<string>`(SELECT COUNT(*) FROM ${likes} WHERE likes.postId = posts.id)`.as(
-  //         "like_count"
-  //       ),
-  //     isLiked: sql<
-  //       "0" | "1"
-  //     >`EXISTS (SELECT 1 FROM ${likes} WHERE likes.postId = posts.id AND likes.userId = ${visitorUserId})`.as(
-  //       "is_liked"
-  //     ),
-  //   },
-  // })
-
   const fetchPosts = await db
     .select({
       id: posts.id,
@@ -156,7 +142,6 @@ export async function createPost(
   }
 ) {
   await db.insert(posts).values(input)
-  revalidatePath("/")
 }
 
 export async function deletePost(input: PostType, currentId: string) {
