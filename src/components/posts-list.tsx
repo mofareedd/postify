@@ -13,9 +13,10 @@ import PostCard from "./post-card"
 interface IProps {
   posts: PostTypeWithRelations[]
   count: number
+  currentUserId?: string
 }
 
-export default function PostsList({ posts, count }: IProps) {
+export default function PostsList({ posts, count, currentUserId }: IProps) {
   const [postsList, setPostsList] = React.useState(posts)
   const { ref, inView, entry } = useInView()
   const [offset, setOffset] = React.useState(0)
@@ -28,7 +29,8 @@ export default function PostsList({ posts, count }: IProps) {
     const newPosts = await getAllPosts({
       offset: newOffset,
       limit: 10,
-      currentUserId: session?.user.id ?? null,
+      visitorUserId: session?.user.id ?? null,
+      currentUserId: currentUserId || null,
     })
     setOffset((prev) => prev + 11)
 
@@ -42,7 +44,6 @@ export default function PostsList({ posts, count }: IProps) {
       loadPosts()
     }
   }, [inView])
-  // posts[0].
   return (
     <div className="flex flex-1 flex-col gap-4">
       {postsList && postsList.length
@@ -50,7 +51,7 @@ export default function PostsList({ posts, count }: IProps) {
         : null}
 
       <div ref={ref} className="my-2 flex items-center justify-center">
-        {offset > count ? (
+        {offset >= count ? (
           <p className="text-default-500">You completed all posts</p>
         ) : (
           <Spinner />

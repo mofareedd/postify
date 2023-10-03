@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth"
 
 import { authOptions } from "@/lib/auth"
 import PostsList from "@/components/posts-list"
-import { getAllPosts, getUserPosts } from "@/app/_actions/posts"
+import { getAllPosts, postsCount } from "@/app/_actions/posts"
 
 export const revalidate = 0
 export default async function UserPosts({
@@ -13,12 +13,23 @@ export default async function UserPosts({
     userId: string
   }
 }) {
-  // const results = await getUserPosts("moe_dev")
   const session = await getServerSession(authOptions)
-  const posts = await getUserPosts(params.userId, session?.user.id ?? null)
+  const posts = await getAllPosts({
+    currentUserId: params.userId ?? null,
+    limit: 10,
+    offset: 0,
+    visitorUserId: session?.user.id ?? null,
+  })
+
+  const count = await postsCount(params.userId)
+
   return (
     <div className="flex-1">
-      <PostsList posts={posts} />
+      <PostsList
+        posts={posts}
+        count={count[0].count}
+        currentUserId={params.userId}
+      />
       {/* <PostsList posts={posts} /> */}
     </div>
   )

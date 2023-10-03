@@ -17,7 +17,7 @@ export default async function Home() {
   const session = await getServerSession(authOptions)
   if (!session?.user.id) redirect("/signin")
   const posts = await getAllPosts({
-    currentUserId: session?.user.id ?? null,
+    visitorUserId: session?.user.id ?? null,
     limit: 10,
     offset: 0,
   })

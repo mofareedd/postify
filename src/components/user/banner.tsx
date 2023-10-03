@@ -7,7 +7,11 @@ import { useSession } from "next-auth/react"
 
 import UpdateProfile from "../form/update-profile"
 
-export default function Banner({ user }: { user: UserType }) {
+export default function Banner({
+  user,
+}: {
+  user: Omit<UserType, "email" | "emailVerified">
+}) {
   const { data: session } = useSession()
   return (
     <Card className="h-32 w-full overflow-visible">
