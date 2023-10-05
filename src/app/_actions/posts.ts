@@ -16,7 +16,7 @@ export async function getAllPosts(input: z.infer<typeof getPostsInput>) {
     : []
   const fetchPosts = await db.query.posts.findMany({
     orderBy: [desc(posts.createdAt)],
-    limit: input.limit,
+    limit: 10,
     where: and(...where),
     offset: input.offset,
     with: {
@@ -90,10 +90,10 @@ export async function getPost(id: string, visitorUserId: string | null) {
   return post
 }
 
-export async function getLikedPosts(
-  userId: string,
+export async function getLikedPosts(input: {
+  currentUserId: string
   visitorUserId: string | null
-) {
+}) {
   const fetchPosts = await db
     .select({
       id: posts.id,
@@ -106,12 +106,16 @@ export async function getLikedPosts(
       likeCount: sql<string>`(SELECT COUNT(*) FROM ${likes} WHERE postId = ${posts.id})`,
       isLiked: sql<
         "0" | "1"
-      >`EXISTS(SELECT 1 FROM ${likes} WHERE likes.postId = ${posts.id} AND likes.userId = ${visitorUserId})`,
+      >`EXISTS(SELECT 1 FROM ${likes} WHERE likes.postId = ${posts.id} AND likes.userId = ${input.visitorUserId})`.as(
+        "is_liked"
+      ),
     })
     .from(posts)
     .innerJoin(users, eq(users.id, posts.authorId))
     .innerJoin(likes, eq(likes.postId, posts.id))
-    .where(eq(likes.userId, userId))
+    .where(eq(likes.userId, input.currentUserId))
+    .orderBy(desc(posts.createdAt))
+
   return fetchPosts
 }
 export async function createPost(

@@ -15,7 +15,6 @@ export const postSchema = z.object({
 })
 
 export const getPostsInput = z.object({
-  limit: z.number().default(10),
   offset: z.number().default(0),
   currentUserId: z.string().or(z.null()).optional(),
   visitorUserId: z.string().or(z.null()).optional(),

@@ -1,9 +1,10 @@
 "use client"
 
 import React from "react"
+import { PostType } from "@/db/schema"
 import { Card, CardBody, CardHeader, Image, Link } from "@nextui-org/react"
 
-export default function MediaGallary() {
+export default function MediaGallary({ posts }: { posts: PostType[] }) {
   return (
     <Card>
       <CardHeader>
@@ -26,6 +27,8 @@ export default function MediaGallary() {
               alt="test"
             />
           ))}
+
+          {/* {posts && posts.length ? posts.map((post)=> console.log('')) :null} */}
         </div>
       </CardBody>
     </Card>

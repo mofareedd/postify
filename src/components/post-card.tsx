@@ -39,7 +39,10 @@ import FollowsBtn from "./follows-btn"
 import { Icons } from "./icons"
 
 export default function PostCard({ post }: { post: PostTypeWithRelations }) {
-  const [isLiked, setIsLiked] = React.useState<"0" | "1">(post.isLiked ?? "0")
+  // prettier-ignore
+  // @ts-ignore
+  const initialLike = post.isLiked?.toString() === "1" || post.isLiked === true ? "1" : "0"
+  const [isLiked, setIsLiked] = React.useState<"0" | "1">(initialLike)
   const { data: session } = useSession()
   const { likeHandler, isLoading } = usePostActions()
 
@@ -67,7 +70,7 @@ export default function PostCard({ post }: { post: PostTypeWithRelations }) {
       <Divider />
 
       <CardBody className="px-7 text-small">
-        <Link href={`${post.authorId}/posts/${post.id}`}>
+        <Link href={`/${post.authorId}/posts/${post.id}`}>
           <p className="mb-4 mt-2 whitespace-pre-line">{post.content}</p>
         </Link>
         {post.images?.length ? (

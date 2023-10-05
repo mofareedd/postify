@@ -6,7 +6,7 @@ import { Spinner } from "@nextui-org/react"
 import { useSession } from "next-auth/react"
 import { useInView } from "react-intersection-observer"
 
-import { getAllPosts } from "@/app/_actions/posts"
+import { getAllPosts, getLikedPosts } from "@/app/_actions/posts"
 
 import PostCard from "./post-card"
 
@@ -14,9 +14,15 @@ interface IProps {
   posts: PostTypeWithRelations[]
   count: number
   currentUserId?: string
+  isLikedPosts?: boolean
 }
 
-export default function PostsList({ posts, count, currentUserId }: IProps) {
+export default function PostsList({
+  posts,
+  count,
+  currentUserId,
+  isLikedPosts = false,
+}: IProps) {
   const [postsList, setPostsList] = React.useState(posts)
   const { ref, inView, entry } = useInView()
   const [offset, setOffset] = React.useState(0)
@@ -28,10 +34,10 @@ export default function PostsList({ posts, count, currentUserId }: IProps) {
 
     const newPosts = await getAllPosts({
       offset: newOffset,
-      limit: 10,
       visitorUserId: session?.user.id ?? null,
       currentUserId: currentUserId || null,
     })
+
     setOffset((prev) => prev + 11)
 
     if (newPosts && newPosts.length) {
@@ -40,7 +46,7 @@ export default function PostsList({ posts, count, currentUserId }: IProps) {
   }
 
   React.useEffect(() => {
-    if (inView && offset < count) {
+    if (inView && offset < count && count > 10) {
       loadPosts()
     }
   }, [inView])
@@ -51,7 +57,7 @@ export default function PostsList({ posts, count, currentUserId }: IProps) {
         : null}
 
       <div ref={ref} className="my-2 flex items-center justify-center">
-        {offset >= count ? (
+        {offset >= count || count <= 10 ? (
           <p className="text-default-500">You completed all posts</p>
         ) : (
           <Spinner />

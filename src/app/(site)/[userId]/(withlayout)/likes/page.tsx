@@ -2,7 +2,7 @@ import React from "react"
 import { getServerSession } from "next-auth"
 
 import { authOptions } from "@/lib/auth"
-import PostsList from "@/components/posts-list"
+import PostCard from "@/components/post-card"
 import { getLikedPosts } from "@/app/_actions/posts"
 
 export default async function UserLikes({
@@ -13,10 +13,18 @@ export default async function UserLikes({
   }
 }) {
   const session = await getServerSession(authOptions)
-  const posts = await getLikedPosts(params.userId, session?.user.id ?? null)
+  const posts = await getLikedPosts({
+    currentUserId: params.userId,
+    visitorUserId: session?.user.id ?? null,
+  })
+
   return (
     <div className="flex-1">
-      <PostsList posts={posts} />
+      <div className="flex flex-1 flex-col gap-4">
+        {posts && posts.length
+          ? posts.map((post) => <PostCard key={post.id} post={post} />)
+          : null}
+      </div>
     </div>
   )
 }

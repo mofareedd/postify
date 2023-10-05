@@ -16,7 +16,6 @@ export default async function UserPosts({
   const session = await getServerSession(authOptions)
   const posts = await getAllPosts({
     currentUserId: params.userId ?? null,
-    limit: 10,
     offset: 0,
     visitorUserId: session?.user.id ?? null,
   })
@@ -30,7 +29,6 @@ export default async function UserPosts({
         count={count[0].count}
         currentUserId={params.userId}
       />
-      {/* <PostsList posts={posts} /> */}
     </div>
   )
 }
