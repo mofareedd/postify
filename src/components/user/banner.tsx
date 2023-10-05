@@ -5,6 +5,7 @@ import { UserType } from "@/db/schema"
 import { Avatar, Button, Card } from "@nextui-org/react"
 import { useSession } from "next-auth/react"
 
+import FollowsBtn from "../follows-btn"
 import UpdateProfile from "../form/update-profile"
 
 export default function Banner({
@@ -40,24 +41,7 @@ export default function Banner({
           {session?.user.id === user.id ? (
             <UpdateProfile user={session.user} />
           ) : (
-            <Button
-              className={
-                // isFollowed ? "border-default-200 bg-transparent text-foreground" : ""
-                ""
-              }
-              color="primary"
-              radius="full"
-              size="sm"
-              // variant={isFollowed ? "bordered" : "solid"}
-              variant="bordered"
-              onPress={() => {
-                // setIsFollowed(!isFollowed)
-                // toast.success("You are now following ")
-              }}
-            >
-              {/* {isFollowed ? "Unfollow" : "Follow"} */}
-              Follow
-            </Button>
+            <FollowsBtn user={user} />
           )}
         </div>
       </div>

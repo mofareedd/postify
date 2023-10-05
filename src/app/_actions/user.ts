@@ -2,14 +2,21 @@
 
 import { db } from "@/db"
 import { follows, users } from "@/db/schema"
-import { and, eq, isNotNull, sql } from "drizzle-orm"
+import { and, eq, isNotNull, SQL, sql } from "drizzle-orm"
 import { z } from "zod"
 
 import { profileSchema } from "@/lib/validation/profile"
 
-export async function getAllUsers(id?: string | null) {
+export async function getAllUsers({
+  id,
+  where = [],
+}: {
+  id?: string | null
+  where?: SQL[]
+}) {
+  console.log(...where)
   const fetchUsers = await db.query.users.findMany({
-    where: isNotNull(users.username),
+    where: and(isNotNull(users.username), ...where),
     limit: 10,
     columns: {
       email: false,
@@ -41,12 +48,19 @@ export async function updateProfile(
   await db.update(users).set(input).where(eq(users.id, id))
 }
 
-export async function getUserById(id: string) {
+export async function getUserById(id: string, visitorId?: string | null) {
   const user = await db.query.users.findFirst({
     where: eq(users.id, id),
     columns: {
       email: false,
       emailVerified: false,
+    },
+    extras: {
+      isFollowed: sql<
+        "0" | "1"
+      >`EXISTS (SELECT 1 FROM ${follows} WHERE follows.following = users.id AND follows.follower = ${visitorId})`.as(
+        "isFollowed"
+      ),
     },
   })
 

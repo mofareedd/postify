@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { UserType } from "@/db/schema"
 import { Avatar, Card, CardBody, CardHeader } from "@nextui-org/react"
 
@@ -15,7 +16,7 @@ export default function ProfileInfo({
   return (
     <Card className="h-fit w-full">
       <CardHeader className="justify-between">
-        <div className="flex gap-5">
+        <Link href={`/${user.id}`} className="flex gap-5">
           <Avatar
             isBordered
             radius="full"
@@ -31,7 +32,7 @@ export default function ProfileInfo({
               @{user?.username}
             </h5>
           </div>
-        </div>
+        </Link>
         {isMyProfile ? <UpdateProfile user={user} /> : null}
       </CardHeader>
       <CardBody className="my-2 px-3 py-0 text-small text-default-400">

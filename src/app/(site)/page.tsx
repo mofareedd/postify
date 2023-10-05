@@ -22,13 +22,13 @@ export default async function Home() {
       offset: 0,
     }),
     postsCount(),
-    getAllUsers(session?.user.id ?? null),
+    getAllUsers({ id: session?.user.id ?? null }),
   ])
 
   return (
     <main className="flex min-h-screen flex-row gap-6 px-10 pb-10">
       {session?.user ? (
-        <div className="hidden max-w-[340px] flex-col gap-6 xl:flex">
+        <div className="hidden w-full max-w-[340px] flex-col gap-6 xl:flex">
           <ProfileInfo
             user={{ ...session.user, isFollowed: "0" }}
             isMyProfile

@@ -19,14 +19,15 @@ export type Icon = LucideIcon
 
 export const Icons = {
   logo: (props: LucideProps) => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" {...props}>
-      <g data-name="Outline">
-        <path
-          d="M61 10h-7V3a1 1 0 00-2 0v7H12V3a1 1 0 00-2 0v7H3a1 1 0 000 2h7v40H3a1 1 0 000 2h7v7a1 1 0 002 0v-7h40v7a1 1 0 002 0v-7h3a1 1 0 000-2h-3V12h7a1 1 0 000-2zm-9 14h-5v-5h5zm0 7h-5v-5h5zm0 7h-5v-5h5zm-40-5h5v5h-5zm0-7h5v5h-5zm33 5h-5v-5h5zm-7 0h-5v-5h5zm-7 0h-5v-5h5zm-7 0h-5v-5h5zm-5 2h5v5h-5zm7 0h5v5h-5zm7 0h5v5h-5zm7 0h5v5h-5zm5-9h-5v-5h5zm-7 0h-5v-5h5zm-7 0h-5v-5h5zm-7 0h-5v-5h5zm-7 0h-5v-5h5zm-5 16h5v5h-5zm7 0h5v5h-5zm7 0h5v5h-5zm7 0h5v5h-5zm7 0h5v5h-5zm7 0h5v5h-5zm5-23h-5v-5h5zm-7 0h-5v-5h5zm-7 0h-5v-5h5zm-7 0h-5v-5h5zm-7 0h-5v-5h5zm-7 0h-5v-5h5zm-5 30h5v5h-5zm7 0h5v5h-5zm7 0h5v5h-5zm7 0h5v5h-5zm7 0h5v5h-5zm7 0h5v5h-5z"
-          data-original="currentColor"
-        ></path>
-        <circle cx="61" cy="53" r="1" data-original="currentColor"></circle>
-      </g>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" {...props}>
+      <path
+        fill="#01579b"
+        d="M42,40c0,1.105-0.895,2-2,2H8c-1.105,0-2-0.895-2-2V8c0-1.105,0.895-2,2-2h32c1.105,0,2,0.895,2,2V40	z"
+      />
+      <path
+        fill="#fff"
+        d="M18,42h-4V17c0-2.757,2.243-5,5-5h7c4.963,0,9,4.038,9,9s-4.037,9-9,9h-8V42z M18,26h8	c2.757,0,5-2.243,5-5s-2.243-5-5-5h-8V26z"
+      />
     </svg>
   ),
   google: (props: LucideProps) => (

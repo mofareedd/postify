@@ -28,6 +28,7 @@ export default function ProfileDrop() {
         />
       </DropdownTrigger>
       <DropdownMenu
+        disabledKeys={["analytics", "mode", "help", "settings"]}
         closeOnSelect={false}
         aria-label="Profile Actions"
         variant="flat"
@@ -35,20 +36,19 @@ export default function ProfileDrop() {
         <DropdownItem key="" className="h-14 gap-2">
           <p className="font-semibold">Signed in as</p>
           <p className="max-w-[150px] truncate font-semibold">
-            {session?.user?.email}
+            {session?.user.name}
           </p>
         </DropdownItem>
         <DropdownItem
           key="profile"
           onClick={() => router.push(`${session?.user.id}`)}
         >
-          My Profile
+          Profile
         </DropdownItem>
-        <DropdownItem key="team_settings">Team Settings</DropdownItem>
         <DropdownItem key="analytics">Analytics</DropdownItem>
-        <DropdownItem key="system">System</DropdownItem>
-        <DropdownItem key="configurations">Configurations</DropdownItem>
-        <DropdownItem key="help_and_feedback">
+        <DropdownItem key="settings">Settinga</DropdownItem>
+        <DropdownItem key="help">Help & Support</DropdownItem>
+        <DropdownItem key="mode">
           <ModeToggle />
         </DropdownItem>
         <DropdownItem

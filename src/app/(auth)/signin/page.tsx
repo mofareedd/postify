@@ -5,11 +5,6 @@ import { OAuthSignIn } from "@/components/form/oauth-signin"
 
 // import { cn } from "@/lib/utils";
 
-export const metadata: Metadata = {
-  title: "Authentication",
-  description: "Authentication forms built using the components.",
-}
-
 export default function AuthenticationPage() {
   return (
     <div className="h-screen w-full bg-white text-foreground-50 lg:p-8">

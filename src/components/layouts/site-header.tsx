@@ -10,7 +10,7 @@ export default function SiteHeader() {
     <nav className="h-10">
       <Card className="flex flex-row items-center justify-between rounded-none px-8 py-3">
         <Link href={"/"}>
-          <Icons.logo className="h-6 w-6 fill-foreground-700" />
+          <Icons.logo className="h-10 w-10 fill-foreground-700" />
         </Link>
         <ProfileDrop />
       </Card>
