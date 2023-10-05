@@ -1,0 +1,1 @@
+ALTER TABLE `post` ADD CONSTRAINT `post_authorId_user_id_fk` FOREIGN KEY (`authorId`) REFERENCES `user`(`id`) ON DELETE cascade ON UPDATE no action;

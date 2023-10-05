@@ -71,6 +71,20 @@
       "when": 1696028094006,
       "tag": "0009_soft_shape",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1696515995218,
+      "tag": "0010_panoramic_lethal_legion",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1696516135306,
+      "tag": "0011_clean_hobgoblin",
+      "breakpoints": true
     }
   ]
 }

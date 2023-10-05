@@ -117,9 +117,7 @@ export const posts = mysqlTable("post", {
     .primaryKey(),
   content: text("content").notNull(),
   images: json("images").$type<UploadedFile[] | null>().default(null),
-  authorId: varchar("authorId", { length: 255 })
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
+  authorId: varchar("authorId", { length: 255 }).notNull(),
   createdAt: timestamp("createdAt").defaultNow(),
 })
 
