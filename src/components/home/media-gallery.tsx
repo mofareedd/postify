@@ -1,11 +1,38 @@
 "use client"
 
 import React from "react"
-import { PostType } from "@/db/schema"
+import { PostType, PostTypeWithRelations, UserType } from "@/db/schema"
 import { Card, CardBody, CardHeader, Image, Link } from "@nextui-org/react"
+import { useQuery } from "@tanstack/react-query"
 
-export default function MediaGallary({ posts }: { posts: PostType[] }) {
+import { usePosts } from "@/hooks/usePosts"
+import { getAllPosts } from "@/app/_actions/posts"
+
+const queryKey = ["media"] // Define queryKey outside of the configuration object
+
+export default function MediaGallary({ user }: { user: UserType }) {
   const [counter, setCounter] = React.useState(0)
+
+  // const { data, isLoading } = useQuery<PostTypeWithRelations[], any>(
+  //   ["media"],
+  //   fetchPosts,
+  //   {
+  //     onError: (err: any) => console.log(err),
+  //   }
+  // )
+
+  // console.log(data)
+  // async function fetchPosts() {
+  //   try {
+  //     const posts = await getAllPosts({ offset: 0, currentUserId: user.id })
+
+  //     console.log(posts)
+  //     return posts
+  //   } catch (err: any) {
+  //     console.log(err)
+  //     throw new Error(err)
+  //   }
+  // }
   return (
     <Card>
       <CardHeader>
@@ -17,9 +44,9 @@ export default function MediaGallary({ posts }: { posts: PostType[] }) {
         </div>
       </CardHeader>
       <CardBody>
-        {posts && posts.length ? (
+        {/* {data && data.length ? (
           <div className="grid grid-cols-3 gap-2">
-            {posts.map((post, i) => {
+            {data.map((post, i) => {
               if (!post.images?.length) return
               setCounter((prevCounter) => prevCounter + 1)
               return (
@@ -34,7 +61,7 @@ export default function MediaGallary({ posts }: { posts: PostType[] }) {
               )
             })}
           </div>
-        ) : null}
+        ) : null} */}
         {!counter ? (
           <p className="whitespace-nowrap text-center text-sm text-default-500">
             There is no media to display

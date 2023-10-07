@@ -32,7 +32,7 @@ export default async function Home() {
             user={{ ...session.user, isFollowed: "0" }}
             isMyProfile
           />
-          {/* <MediaGallary posts={userPosts} /> */}
+          <MediaGallary user={session.user} />
         </div>
       ) : (
         <div className="w-[340px]" />

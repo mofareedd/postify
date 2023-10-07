@@ -5,8 +5,6 @@ import { useSession } from "next-auth/react"
 import { catchError } from "@/lib/utils"
 import { getAllPosts } from "@/app/_actions/posts"
 
-const QUERY_KEY = "posts"
-
 export function usePosts({
   postCount,
   userId,
