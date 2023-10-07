@@ -1,6 +1,7 @@
 "use client"
 
 import React from "react"
+import Link from "next/link"
 import { UserType } from "@/db/schema"
 import { UserEmailOmitType } from "@/types"
 import { Card, User } from "@nextui-org/react"
@@ -21,13 +22,15 @@ export default function Suggests({ users }: { users: UserEmailOmitType[] }) {
                   key={user.id}
                   className="flex flex-row items-center justify-between"
                 >
-                  <User
-                    name={user.name}
-                    description={user?.username}
-                    avatarProps={{
-                      src: user.image ?? "",
-                    }}
-                  />{" "}
+                  <Link href={`/${user.id}`}>
+                    <User
+                      name={user.name}
+                      description={"@" + user?.username}
+                      avatarProps={{
+                        src: user.image ?? "",
+                      }}
+                    />
+                  </Link>
                   <FollowsBtn user={user} />
                 </div>
               )

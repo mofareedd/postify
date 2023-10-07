@@ -14,17 +14,11 @@ interface IProps {
   posts: PostTypeWithRelations[]
   count: number
   currentUserId?: string
-  isLikedPosts?: boolean
 }
 
-export default function PostsList({
-  posts,
-  count,
-  currentUserId,
-  isLikedPosts = false,
-}: IProps) {
+export default function PostsList({ posts, count, currentUserId }: IProps) {
   const [postsList, setPostsList] = React.useState(posts)
-  const { ref, inView, entry } = useInView()
+  const { ref, inView } = useInView()
   const [offset, setOffset] = React.useState(0)
 
   const { data: session } = useSession()
@@ -49,7 +43,8 @@ export default function PostsList({
     if (inView && offset < count && count > 10) {
       loadPosts()
     }
-  }, [inView])
+  }, [inView, posts])
+
   return (
     <div className="flex flex-1 flex-col gap-4">
       {postsList && postsList.length

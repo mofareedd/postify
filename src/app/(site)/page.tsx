@@ -3,9 +3,11 @@ import { getServerSession } from "next-auth"
 
 import { authOptions } from "@/lib/auth"
 import CreatePost from "@/components/form/create-post"
+import Feed from "@/components/home/feed"
 import MediaGallary from "@/components/home/media-gallery"
 import ProfileInfo from "@/components/home/profile-info"
 import Suggests from "@/components/home/suggests"
+import InfinitiePosts from "@/components/infinite-posts"
 import ModalPost from "@/components/modal-post"
 import PostsList from "@/components/posts-list"
 import { getAllPosts, postsCount } from "@/app/_actions/posts"
@@ -40,8 +42,9 @@ export default async function Home() {
       )}
       <div className="flex flex-1 flex-col gap-4">
         {session?.user ? <CreatePost user={session.user} /> : null}
-        <PostsList posts={posts} count={count[0].count} />
+        <InfinitiePosts count={count[0].count} />
       </div>
+      {/* <Feed count={count[0].count} session={session} /> */}
       <Suggests users={users} />
     </main>
   )

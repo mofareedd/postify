@@ -32,39 +32,44 @@ import { MoreHorizontal } from "lucide-react"
 import { useSession } from "next-auth/react"
 import { toast } from "sonner"
 
-import usePostActions from "@/hooks/usePostActions"
+import useLikePost from "@/hooks/useLikePost"
 import usePostDeletion from "@/hooks/usePostDeletion"
 
 import FollowsBtn from "./follows-btn"
 import { Icons } from "./icons"
 
-export default function PostCard({ post }: { post: PostTypeWithRelations }) {
+export default function PostCard({
+  post,
+  queryKey,
+}: {
+  post: PostTypeWithRelations
+  queryKey?: string[]
+}) {
   // prettier-ignore
   // @ts-ignore
   const initialLike = post.isLiked?.toString() === "1" || post.isLiked === true ? "1" : "0"
   const [isLiked, setIsLiked] = React.useState<"0" | "1">(initialLike)
   const { data: session } = useSession()
-  const { likeHandler, isLoading } = usePostActions()
+  const { mutateAsync, isLoading } = useLikePost({ queryKey })
 
-  function actionHandler(type: "like" | "bookmark") {
+  async function actionHandler() {
     if (!session?.user.id)
       return toast.error("You need to be logged in to like a post")
 
-    if (type === "like") {
-      setIsLiked((prev) => (prev === "0" ? "1" : "0"))
-      likeHandler({
-        postId: post.id,
-        userId: session?.user.id,
-        action: post.isLiked,
-      })
-      return
-    }
+    setIsLiked((prev) => (prev === "0" ? "1" : "0"))
+
+    return await mutateAsync({
+      postId: post.id,
+      userId: session?.user.id,
+      action: post.isLiked,
+    })
   }
   return (
     <Card className="min-h-32 h-fit w-full">
       <PostHeader
         post={post}
         currentUserId={session?.user ? session.user.id : null}
+        queryKey={queryKey}
       />
 
       <Divider />
@@ -87,7 +92,7 @@ export default function PostCard({ post }: { post: PostTypeWithRelations }) {
           </button>
           <button
             disabled={isLoading}
-            onClick={() => actionHandler("like")}
+            onClick={actionHandler}
             className="group flex items-center gap-3"
           >
             <Icons.like
@@ -112,11 +117,17 @@ export default function PostCard({ post }: { post: PostTypeWithRelations }) {
 function PostHeader({
   post,
   currentUserId,
+  queryKey,
 }: {
   post: PostTypeWithRelations
   currentUserId: string | null
+  queryKey?: string[]
 }) {
-  const { deletePostHandler, isLoading } = usePostDeletion(post, currentUserId)
+  const { mutateAsync, isLoading } = usePostDeletion({
+    post,
+    currentUserId,
+    queryKey,
+  })
   const router = useRouter()
 
   return (
@@ -236,7 +247,9 @@ function PostHeader({
               "text-danger",
               post.authorId !== currentUserId ? "hidden" : "flex"
             )}
-            onClick={deletePostHandler}
+            onClick={() => {
+              mutateAsync()
+            }}
             color="danger"
           >
             Delete Post

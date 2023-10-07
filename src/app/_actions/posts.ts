@@ -124,7 +124,7 @@ export async function createPost(
     authorId: string
   }
 ) {
-  await db.insert(posts).values(input)
+  return await db.insert(posts).values(input)
 }
 
 export async function deletePost(input: PostType, currentId: string) {
@@ -133,7 +133,6 @@ export async function deletePost(input: PostType, currentId: string) {
   }
 
   await db.delete(posts).where(eq(posts.id, input.id))
-  revalidatePath("/")
   if (!input.images?.length) return
   await utapi.deleteFiles(input.images.map((file) => file.id))
 }

@@ -2,6 +2,7 @@ import React from "react"
 import { getServerSession } from "next-auth"
 
 import { authOptions } from "@/lib/auth"
+import InfinitiePosts from "@/components/infinite-posts"
 import PostsList from "@/components/posts-list"
 import { getAllPosts, postsCount } from "@/app/_actions/posts"
 
@@ -24,10 +25,10 @@ export default async function UserPosts({
 
   return (
     <div className="flex-1">
-      <PostsList
-        posts={posts}
+      <InfinitiePosts
         count={count[0].count}
-        currentUserId={params.userId}
+        userId={params.userId}
+        queryKey={[params.userId]}
       />
     </div>
   )

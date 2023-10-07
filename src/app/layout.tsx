@@ -7,6 +7,7 @@ import { Inter } from "next/font/google"
 import { getServerSession } from "next-auth"
 
 import { authOptions } from "@/lib/auth"
+import QueryProvider from "@/components/providers/query-client"
 import SessionProvider from "@/components/providers/session-provider"
 import { Toaster } from "@/components/providers/toast-provider"
 
@@ -29,10 +30,12 @@ export default async function RootLayout({
     <html lang="en" className="dark" suppressHydrationWarning={true}>
       <body className={inter.className}>
         <SessionProvider session={session}>
-          <NextUIClientProvider>
-            <Toaster />
-            {children}
-          </NextUIClientProvider>
+          <QueryProvider>
+            <NextUIClientProvider>
+              <Toaster />
+              {children}
+            </NextUIClientProvider>
+          </QueryProvider>
         </SessionProvider>
       </body>
     </html>

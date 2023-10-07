@@ -1,5 +1,4 @@
-import React from "react"
-import { useRouter } from "next/navigation"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { generateReactHelpers } from "@uploadthing/react/hooks"
 import { toast } from "sonner"
 import { z } from "zod"
@@ -9,19 +8,21 @@ import { postSchema } from "@/lib/validation/post"
 import { createPost } from "@/app/_actions/posts"
 import { OurFileRouter } from "@/app/api/uploadthing/core"
 
+type CreatePostType = z.infer<typeof postSchema> & { currentUserId: string }
 const { useUploadThing } = generateReactHelpers<OurFileRouter>()
 function useCreatePost() {
-  const [isLoading, setIsLoading] = React.useState(false)
+  const queryClient = useQueryClient()
   const { isUploading, startUpload } = useUploadThing("imageUploader")
-  const router = useRouter()
 
-  async function createPostHandler(
-    data: z.infer<typeof postSchema>,
-    currentUserId: string
-  ) {
-    if (!currentUserId)
-      return toast.error("You must be logged in to create a post")
-    setIsLoading(true)
+  const query = useMutation(createPostHandler, {
+    onSuccess: () => {
+      toast.success("Post created successfully")
+      queryClient.invalidateQueries(["posts"])
+    },
+    onError: (error: any) => catchError(error),
+  })
+
+  async function createPostHandler(data: CreatePostType) {
     try {
       const images = isArrayOfFile(data.images)
         ? await startUpload(data.images).then((res) => {
@@ -34,22 +35,17 @@ function useCreatePost() {
           })
         : null
 
-      await createPost({
+      return await createPost({
         content: data.content,
         images,
-        authorId: currentUserId,
+        authorId: data.currentUserId,
       })
-
-      router.refresh()
-      toast.success("Post created successfully")
-    } catch (error) {
-      catchError(error)
-    } finally {
-      setIsLoading(false)
+    } catch (error: any) {
+      throw new Error(error)
     }
   }
 
-  return { isLoading, isUploading, createPostHandler }
+  return { ...query, isUploading }
 }
 
 export default useCreatePost

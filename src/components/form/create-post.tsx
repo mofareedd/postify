@@ -16,14 +16,18 @@ import UploadFile from "../upload-file"
 type PostInput = z.infer<typeof postSchema>
 export default function CreatePost({ user }: { user: User }) {
   const [files, setFiles] = React.useState<any[] | null>(null)
-  const { createPostHandler, isLoading, isUploading } = useCreatePost()
+  const { mutateAsync, isLoading, isUploading } = useCreatePost()
 
   const form = useForm<PostInput>({
     resolver: zodResolver(postSchema),
   })
 
-  function onSubmit(data: PostInput) {
-    createPostHandler(data, user.id).then(() => {
+  async function onSubmit(data: PostInput) {
+    await mutateAsync({
+      content: data.content,
+      currentUserId: user.id,
+      images: data.images,
+    }).then(() => {
       form.reset()
       setFiles(null)
     })
