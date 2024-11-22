@@ -85,6 +85,13 @@
       "when": 1696516135306,
       "tag": "0011_clean_hobgoblin",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "5",
+      "when": 1732234696478,
+      "tag": "0012_eminent_red_ghost",
+      "breakpoints": true
     }
   ]
 }

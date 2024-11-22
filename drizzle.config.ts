@@ -4,7 +4,7 @@ import { env } from "./src/env.mjs"
 
 export default {
   schema: "./src/db/schema.ts",
-  driver: "mysql2",
+  driver: "pg",
   out: "./migrations",
   dbCredentials: {
     connectionString: env.DATABASE_URL,
